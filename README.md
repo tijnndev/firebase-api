@@ -1,7 +1,3 @@
-Here’s the updated README reflecting the current build and run process using `npm run buildapp` and relevant tooling:
-
----
-
 # Firebase API
 
 A Node.js-based backend service that manages users, services, and Firebase Cloud Messaging (FCM) tokens using SQLite. It supports user authentication, service creation, token registration, and push notification broadcasting via FCM.
