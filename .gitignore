@@ -131,3 +131,4 @@ dist
 
 serviceAccountKey.json
 localdb.sqlite
+package-lock.json
