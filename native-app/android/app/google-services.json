@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "238680437595",
+    "project_id": "native-app-986da",
+    "storage_bucket": "native-app-986da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238680437595:android:43ec19ee0d4d378f15e07e",
+        "android_client_info": {
+          "package_name": "nl.tijnndev.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8r_WtRkyGNF2uX-f__B-QLLQGkzvBsTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

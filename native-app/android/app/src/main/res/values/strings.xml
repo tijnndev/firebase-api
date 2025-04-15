@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">native-app</string>
+    <string name="title_activity_main">native-app</string>
+    <string name="package_name">nl.tijnndev.firebase</string>
+    <string name="custom_url_scheme">nl.tijnndev.firebase</string>
+</resources>
