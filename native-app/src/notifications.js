@@ -30,12 +30,9 @@ export const requestNotificationPermission = async () => {
       logger.info("Native FCM token: " + token);
     }
 
-    await registerForPushNotifications(token);
+    logger.log('Trying to register token:', token);
+    await registerToken(token);
   } catch (error) {
     logger.error("Error fetching FCM token: " + error);
   }
-};
-
-const registerForPushNotifications = async (token) => {
-  await registerToken(token);
 };

@@ -2,7 +2,7 @@ import axios from 'axios'
 import logger from '../logger';
 
 // Your firebase API base URL
-const API_BASE = 'https://yourdomain.com'
+const API_BASE = import.meta.env.VITE_API_URL
 
 let token = localStorage.getItem('token') || null
 let serviceId = 1;
@@ -33,7 +33,8 @@ export const createService = async (name) => {
 }
 
 export const registerToken = async (token) => {
-
+    
+    logger.log('Trying to register token:2', token);
     try {
       const response = await fetch(`${API_BASE}/register-token`, {
         method: 'POST',
