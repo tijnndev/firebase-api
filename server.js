@@ -138,6 +138,16 @@ const broadCastMessage = (serviceId, title, body) => {
       title: title,
       body: body,
     },
+    android: {
+      priority: 'high',
+      notification: {
+        sound: 'default',
+        visibility: 'public',
+        defaultSound: true,
+        defaultVibrateTimings: true,
+        defaultLightSettings: true
+      }
+    }
   };
 
   db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
