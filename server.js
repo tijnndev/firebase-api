@@ -143,9 +143,7 @@ const broadCastMessage = (serviceId, title, body) => {
       notification: {
         sound: 'default',
         visibility: 'public',
-        defaultSound: true,
-        defaultVibrateTimings: true,
-        defaultLightSettings: true
+        channelId: 'high_priority_channel' // required for Android 8+
       }
     }
   };
