@@ -97,6 +97,10 @@ const authenticate = (req, res, next) => {
   });
 };
 
+app.get('/', (req, res) => {
+  res.status(200).send({ message: 'Welcome to the Firebase API' });
+});
+
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 

@@ -1,38 +1,42 @@
 import { PushNotifications } from '@capacitor/push-notifications';
-import { Capacitor } from "@capacitor/core";
+import { Capacitor } from '@capacitor/core';
 import { registerToken } from './api/backend';
 import logger from './logger';
 
 export const requestNotificationPermission = async () => {
   try {
-    if (Capacitor.getPlatform() !== "web") {
-      logger.info("Using native platform for FCM token registration.");
-      const permission = await PushNotifications.requestPermissions();
-      if (permission.receive !== "granted") {
-        logger.warn("Push notifications permission denied on native platform.");
-        return;
-      }
+    if (Capacitor.getPlatform() === 'web') return;
+
+    logger.info('Requesting push notification permissions...');
+    const permission = await PushNotifications.requestPermissions();
+
+    if (permission.receive !== 'granted') {
+      logger.warn('Push notifications permission denied.');
+      return;
     }
 
-    logger.info("Fetching token.");
-    let token;
-    if (Capacitor.getPlatform() === "android") {
-      logger.info("Fetching token for native platform.");
-      token = await new Promise((resolve, reject) => {
-        PushNotifications.register().then(() => {
-          PushNotifications.addListener('registration', (token) => {
-            resolve(token.value);
-          });
-        }).catch((error) => {
-          reject(error);
-        });
-      });
-      logger.info("Native FCM token: " + token);
-    }
+    logger.info('Registering for push notifications...');
+    await PushNotifications.register();
 
-    logger.log('Trying to register token:', token);
+    const token = await new Promise((resolve, reject) => {
+      const onRegister = (token) => {
+        PushNotifications.removeAllListeners();
+        resolve(token.value);
+      };
+
+      const onRegistrationError = (error) => {
+        PushNotifications.removeAllListeners();
+        reject(error);
+      };
+
+      PushNotifications.addListener('registration', onRegister);
+      PushNotifications.addListener('registrationError', onRegistrationError);
+    });
+
+    logger.info(`FCM token obtained: ${token}`);
     await registerToken(token);
+    logger.info('FCM token registered with backend.');
   } catch (error) {
-    logger.error("Error fetching FCM token: " + error);
+    logger.error(`Failed to initialize push notifications: ${error}`);
   }
 };

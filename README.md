@@ -46,26 +46,53 @@ npm run dev
 
 ## Building the Native App
 
+Here's the updated documentation with the `.env` file section added:
+
+---
+
+## Building the Native App
+
 Build the frontend and native app using Capacitor:
 
 ```bash
 npm run buildapp
 ```
-If you get the error file not found just create a folder called `dist` in folder `native-app`.
 
-After building you can go into the next folder:
+If you get the error "file not found", just create a folder called `dist` inside the `native-app` folder.
+
+After building, you can find the release APK here:
+
 ```
 native-app/android/app/build/outputs/apk/release
 ```
-To view any buillded APK Files
 
+---
 
-Run the app on the web:
+## Environment Variables (`.env`)
 
+To configure your app, create a `.env` file in the root of the project with the following content:
+
+```env
+VITE_API_URL="http://localhost:3000/api"
+VITE_LOGGER_PACKAGE_NAME="com.yourname.firebase"
+```
+---
+### Explanation:
+
+- `VITE_API_URL`:  
+  The base URL for your backend API.  
+  This is used in frontend HTTP requests (e.g., Axios or Fetch).
+
+- `VITE_LOGGER_PACKAGE_NAME`:  
+  The Android package name used for logging or push notifications.  
+  This should match your native app's Java package (e.g., in `MainActivity.java`).
+
+Make sure to restart the dev/build process after modifying `.env` values.
+
+## Running the Web Application
 ```bash
 npm run dev
 ```
-
 ---
 
 ## Docker Support
