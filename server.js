@@ -213,6 +213,7 @@ app.post('/register-token', (req, res) => {
     }
 
     if (row) {
+      console.log('Token:', token, 'already registered for service:', serviceId);
       return res.status(400).send({ error: 'Token already registered'});
     }
 
