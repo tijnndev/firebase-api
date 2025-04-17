@@ -221,6 +221,8 @@ app.post('/register-token', (req, res) => {
         return res.status(500).send({ error: 'Error registering token'});
       }
       res.status(200).send({ message: 'Token registered successfully'});
+      
+      console.log('New registration token:', token, 'for service:', serviceId);
     });
   });
 });
