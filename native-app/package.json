@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "buildapp": "rmdir /s /q dist && npm run build && npx cap sync android && npx cap copy android && cd android && gradlew clean && gradlew assembleRelease",
+    "buildapp": "(if exist dist rmdir /s /q dist) & npm run build & npx cap sync android & npx cap copy android & cd android & gradlew clean & gradlew assembleRelease",
     "lint": "eslint .",
     "preview": "vite preview"
   },
