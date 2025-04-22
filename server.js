@@ -4,6 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 dotenv.config();
 
@@ -39,6 +40,7 @@ db.run(`
   CREATE TABLE IF NOT EXISTS services (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    secret TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
 `);
@@ -192,14 +194,16 @@ app.post('/create-service', authenticate, (req, res) => {
   const { name } = req.body;
 
   if (!name) {
-    return res.status(400).send({error: 'Name iks required'});
+    return res.status(400).send({ error: 'Name is required' });
   }
 
-  db.run('INSERT INTO services (name) VALUES (?)', [name], (err) => {
+  const secret = crypto.randomBytes(32).toString('hex');
+
+  db.run('INSERT INTO services (name, secret) VALUES (?, ?)', [name, secret], function(err) {
     if (err) {
-      return res.status(500).send({ error: 'Error creating service: ' + err.message});
+      return res.status(500).send({ error: 'Error creating service: ' + err.message });
     }
-    res.status(200).send({message: 'Service created successfully'});
+    res.status(200).send({ message: 'Service created successfully', id: this.lastID, secret });
   });
 });
 
@@ -232,17 +236,53 @@ app.post('/register-token', (req, res) => {
   });
 });
 
-app.post('/broadcast', authenticate, (req, res) => {
-    const { title, body, serviceId } = req.body;
-  
-    if (!title || !body || !serviceId) {
-      return res.status(400).send({ error: 'Title, body, and serviceId are required' });
+app.post('/broadcast', (req, res) => {
+  const { title, body, serviceId, secret } = req.body;
+
+  if (!title || !body || !serviceId || !secret) {
+    return res.status(400).send({ error: 'Title, body, serviceId, and secret are required' });
+  }
+
+  db.get('SELECT secret FROM services WHERE id = ?', [serviceId], (err, row) => {
+    if (err) {
+      return res.status(500).send({ error: 'Database error: ' + err.message });
     }
-  
+
+    if (!row) {
+      return res.status(404).send({ error: 'Service not found' });
+    }
+
+    if (row.secret !== secret) {
+      return res.status(403).send({ error: 'Invalid secret' });
+    }
+
     broadCastMessage(serviceId, title, body);
-  
+
     res.status(200).send({ message: 'Broadcast message sent successfully' });
+  });
 });
+
+app.post('/reset-secret/:serviceId', authenticate, (req, res) => {
+  const { serviceId } = req.params
+
+  if (!serviceId) {
+    return res.status(400).send({ error: 'serviceId is required' })
+  }
+
+  const newSecret = crypto.randomBytes(32).toString('hex')
+
+  db.run('UPDATE services SET secret = ? WHERE id = ?', [newSecret, serviceId], function (err) {
+    if (err) {
+      return res.status(500).send({ error: 'Failed to reset secret: ' + err.message })
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).send({ error: 'Service not found' })
+    }
+
+    res.status(200).send({ message: 'Secret reset successfully', secret: newSecret })
+  })
+})
 
 app.get('/tokens', authenticate, (req, res) => {
   db.all('SELECT * FROM fcm_tokens', [], (err, rows) => {
