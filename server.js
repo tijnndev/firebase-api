@@ -40,6 +40,7 @@ db.run(`
   CREATE TABLE IF NOT EXISTS services (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    url TEXT NOT NULL,
     secret TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
@@ -139,44 +140,50 @@ app.post('/login', (req, res) => {
 const messaging = firebaseAdmin.messaging();
 
 const broadCastMessage = (serviceId, title, body) => {
-  const message = {
-    notification: {
-      title: title,
-      body: body,
-    },
-    android: {
-      priority: 'high',
+  db.get('SELECT * FROM services WHERE id = ?', [serviceId], (err, row) => {
+    const message = {
       notification: {
-        sound: 'default',
-        visibility: 'public',
-        channelId: 'high_priority_channel' // required for Android 8+
+        title: title,
+        body: body,
+      },
+      android: {
+        priority: 'high',
+        notification: {
+          sound: 'default',
+          visibility: 'public',
+          channelId: 'high_priority_channel'
+        }
+      },  
+      data: {
+        url: row.url
       }
-    }
-  };
+    };
 
-  db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
-    if (err) {
-      console.error('Error retrieving FCM tokens:', err.message);
-      return;
-    }
+    db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
+      if (err) {
+        console.error('Error retrieving FCM tokens:', err.message);
+        return;
+      }
 
-    const tokens = rows.map((row) => row.token);
+      const tokens = rows.map((row) => row.token);
 
-    if (tokens.length === 0) {
-      console.log('No tokens found for service:', serviceId);
-      return;
-    }
+      if (tokens.length === 0) {
+        console.log('No tokens found for service:', serviceId);
+        return;
+      }
 
-    tokens.forEach((token) => {
-      messaging
-        .send({ ...message, token })
-        .then((response) => {
-          console.log('Notification sent successfully:', response);
-        })
-        .catch((error) => {
-          console.error('Error sending notification to token:', token, error);
-        });
+      tokens.forEach((token) => {
+        messaging
+          .send({ ...message, token })
+          .then((response) => {
+            console.log('Notification sent successfully:', response);
+          })
+          .catch((error) => {
+            console.error('Error sending notification to token:', token, error);
+          });
+      });
     });
+    
   });
 };
 
