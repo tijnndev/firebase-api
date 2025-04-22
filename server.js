@@ -236,6 +236,28 @@ app.post('/register-token', (req, res) => {
   });
 });
 
+app.post('/unregister-token', (req, res) => {
+  const { token, serviceId } = req.body;
+
+  if (!token || !serviceId) {
+    return res.status(400).send({ error: 'Token and serviceId are required' });
+  }
+
+  db.run('DELETE FROM fcm_tokens WHERE token = ? AND serviceId = ?', [token, serviceId], function (err) {
+    if (err) {
+      return res.status(500).send({ error: 'Error unregistering token: ' + err.message });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).send({ error: 'Token not found for the service' });
+    }
+
+    res.status(200).send({ message: 'Token unregistered successfully' });
+    console.log('Token unregistered:', token, 'for service:', serviceId);
+  });
+});
+
+
 app.post('/broadcast', (req, res) => {
   const { title, body, serviceId, secret } = req.body;
 
