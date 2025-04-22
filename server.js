@@ -171,7 +171,6 @@ const broadCastMessage = (serviceId, title, body) => {
           message.notification = {
             title: title,
             body: body,
-            click_action: row.url
           };
           message.data = {
             ...message.data,
