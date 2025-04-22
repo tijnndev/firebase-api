@@ -171,11 +171,17 @@ const broadCastMessage = (serviceId, title, body) => {
           message.notification = {
             title: title,
             body: body,
+            click_action: row.url
           };
           message.data = {
             ...message.data,
             click_action: row.url
           };
+          message.webpush = {
+            fcmOptions: {
+              link: row.url,
+            },
+          }
         }
         if (token.type === 'android') {
           message.notification = {
