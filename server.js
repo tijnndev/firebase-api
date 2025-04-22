@@ -315,6 +315,25 @@ app.get('/tokens', authenticate, (req, res) => {
   });
 });
 
+app.delete('/tokens/:id', authenticate, (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).send({ error: 'Token id is required' });
+  }
+
+  db.run('DELETE FROM fcm_tokens WHERE id = ?', [id], function (err) {
+    if (err) {
+      return res.status(500).send({ error: 'Error deleting token: ' + err.message });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).send({ error: 'Token not found' });
+    }
+
+    res.status(200).send({ message: 'Token deleted successfully' });
+  });
+});
 
 const PORT = process.env.HTTP_PORT || 3000;
 app.listen(PORT, () => {
