@@ -158,6 +158,7 @@ const broadCastMessage = (serviceId, title, body) => {
         url: row.url
       }
     };
+    console.log(row.url)
 
     db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
       if (err) {
