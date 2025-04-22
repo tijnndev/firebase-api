@@ -145,7 +145,6 @@ const broadCastMessage = (serviceId, title, body) => {
     db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
       
       const message = {
-        priority: "high",
         data: {
           title: title,
           body: body,
