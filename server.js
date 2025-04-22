@@ -167,6 +167,13 @@ const broadCastMessage = (serviceId, title, body) => {
 
       tokens.forEach((token) => {
         console.log(token)
+        if (token.type === 'web') {
+          message.notification = {
+            title: title,
+            body: body,
+            click_action: row.url
+          };
+        }
         if (token.type === 'android') {
           message.notification = {
             title: title,
