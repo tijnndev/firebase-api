@@ -168,6 +168,7 @@ const broadCastMessage = (serviceId, title, body) => {
       }
 
       tokens.forEach((token) => {
+        console.log(token)
         if (token.type === 'android') {
           message.android = {
             priority: 'high',
