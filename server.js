@@ -198,15 +198,15 @@ app.get('/services', authenticate, (req,res) => {
 })
 
 app.post('/create-service', authenticate, (req, res) => {
-  const { name } = req.body;
+  const { name, url } = req.body;
 
-  if (!name) {
-    return res.status(400).send({ error: 'Name is required' });
+  if (!name || !url) {
+    return res.status(400).send({ error: "Invalid body." });
   }
 
   const secret = crypto.randomBytes(32).toString('hex');
 
-  db.run('INSERT INTO services (name, secret) VALUES (?, ?)', [name, secret], function(err) {
+  db.run('INSERT INTO services (name, secret, url) VALUES (?, ?, ?)', [name, secret, url], function(err) {
     if (err) {
       return res.status(500).send({ error: 'Error creating service: ' + err.message });
     }
