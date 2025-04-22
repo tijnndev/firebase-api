@@ -51,6 +51,7 @@ db.run(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     token TEXT NOT NULL UNIQUE,
     serviceId INTEGER NOT NULL,
+    type TEXT NOT NULL,
     FOREIGN KEY (serviceId) REFERENCES services(id) ON DELETE CASCADE
   )
 `);
@@ -141,26 +142,26 @@ const messaging = firebaseAdmin.messaging();
 
 const broadCastMessage = (serviceId, title, body) => {
   db.get('SELECT * FROM services WHERE id = ?', [serviceId], (err, row) => {
-    const message = {
-      notification: {
-        title: title,
-        body: body,
-      },
-      android: {
-        priority: 'high',
-        notification: {
-          sound: 'default',
-          visibility: 'public',
-          channelId: 'high_priority_channel'
-        }
-      },  
-      data: {
-        url: row.url
-      }
-    };
-    console.log(row.url)
-
     db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
+      
+      const message = {
+        notification: {
+          title: title,
+          body: body,
+        }, 
+        data: {
+          url: row.url
+        },
+        android: {
+          priority: 'high',
+          notification: {
+            sound: 'default',
+            visibility: 'public',
+            channelId: 'high_priority_channel'
+          }
+        }, 
+      };
+
       if (err) {
         console.error('Error retrieving FCM tokens:', err.message);
         return;
@@ -217,10 +218,10 @@ app.post('/create-service', authenticate, (req, res) => {
 
 
 app.post('/register-token', (req, res) => {
-  const { token, serviceId } = req.body;
+  const { token, serviceId, type } = req.body;
 
-  if (!token || !serviceId) {
-    return res.status(400).send({ error: 'Token and serviceId are required'});
+  if (!token || !serviceId || !type) {
+    return res.status(400).send({ error: 'Token, type and serviceId are required'});
   }
 
   db.get('SELECT * FROM fcm_tokens WHERE token = ?', [token], (err, row) => {
@@ -233,7 +234,7 @@ app.post('/register-token', (req, res) => {
       return res.status(400).send({ error: 'Token already registered'});
     }
 
-    db.run('INSERT INTO fcm_tokens (token, serviceId) VALUES (?, ?)', [token, serviceId], (err) => {
+    db.run('INSERT INTO fcm_tokens (token, serviceId, type) VALUES (?, ?, ?)', [token, serviceId, type], (err) => {
       if (err) {
         return res.status(500).send({ error: 'Error registering token'});
       }
