@@ -168,10 +168,10 @@ const broadCastMessage = (serviceId, title, body) => {
       tokens.forEach((token) => {
         console.log(token)
         if (token.type === 'web') {
-          // message.notification = {
-          //   title: title,
-          //   body: body,
-          // };
+          message.notification = {
+            title: title,
+            body: body,
+          };
           message.data = {
             ...message.data,
             click_action: row.url
