@@ -145,11 +145,10 @@ const broadCastMessage = (serviceId, title, body) => {
     db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
       
       const message = {
-        notification: {
+        priority: "high",
+        data: {
           title: title,
           body: body,
-        },
-        data: {
           url: row.url,
           LinkUrl: row.url
         }
@@ -170,6 +169,10 @@ const broadCastMessage = (serviceId, title, body) => {
       tokens.forEach((token) => {
         console.log(token)
         if (token.type === 'android') {
+          message.notification = {
+            title: title,
+            body: body,
+          }
           message.android = {
             priority: 'high',
             notification: {
