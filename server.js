@@ -148,18 +148,11 @@ const broadCastMessage = (serviceId, title, body) => {
         notification: {
           title: title,
           body: body,
-        }, 
-        data: {
-          url: row.url
         },
-        android: {
-          priority: 'high',
-          notification: {
-            sound: 'default',
-            visibility: 'public',
-            channelId: 'high_priority_channel'
-          }
-        }, 
+        data: {
+          url: row.url,
+          LinkUrl: row.url
+        }
       };
 
       if (err) {
@@ -167,7 +160,7 @@ const broadCastMessage = (serviceId, title, body) => {
         return;
       }
 
-      const tokens = rows.map((row) => row.token);
+      const tokens = rows.map((row) => row);
 
       if (tokens.length === 0) {
         console.log('No tokens found for service:', serviceId);
@@ -175,13 +168,23 @@ const broadCastMessage = (serviceId, title, body) => {
       }
 
       tokens.forEach((token) => {
+        if (token.type === 'android') {
+          message.android = {
+            priority: 'high',
+            notification: {
+              sound: 'default',
+              visibility: 'public',
+              channelId: 'high_priority_channel'
+            }
+          };
+        }
         messaging
-          .send({ ...message, token })
+          .send({ ...message, token: token.token })
           .then((response) => {
             console.log('Notification sent successfully:', response);
           })
           .catch((error) => {
-            console.error('Error sending notification to token:', token, error);
+            console.error('Error sending notification to token:', token.token, error);
           });
       });
     });
