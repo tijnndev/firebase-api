@@ -204,3 +204,16 @@ body {
   max-width: 100%; 
   overflow-x: auto;
 }
+
+@media screen and (max-width: 425px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  
+}
+@media screen and (max-width: 350px) {
+  .navbar-brand {
+    font-size: .95rem;
+  }
+  
+}
