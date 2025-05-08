@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (sidebarToggle && sidebar && contentWrapper) {
     sidebarToggle.addEventListener('click', function() {
       sidebar.classList.toggle('show');
-      contentWrapper.classList.toggle('sidebar-open');
+      // contentWrapper.classList.toggle('sidebar-open');
     });
   }
   
