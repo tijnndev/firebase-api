@@ -1,0 +1,85 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</h1>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card border-left-primary h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Services</div>
+              <div class="h5 mb-0 font-weight-bold"><%= stats.servicesCount %></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-server fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <a href="/services" class="btn btn-sm btn-primary">View All</a>
+          <a href="/services/create" class="btn btn-sm btn-outline-primary">Add New</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card border-left-success h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">FCM Tokens</div>
+              <div class="h5 mb-0 font-weight-bold"><%= stats.tokensCount %></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-key fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <a href="/tokens" class="btn btn-sm btn-success">View All</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-bell me-2"></i> Notification Test Area</h5>
+        </div>
+        <div class="card-body">
+          <div class="notification-test-area">
+            <%- include('./notification/test') %>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Quick Guide</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6><i class="fas fa-server me-2 text-primary"></i> Services</h6>
+            <p>Create and manage notification services. Each service has a unique secret key for sending notifications.</p>
+          </div>
+          
+          <div class="mb-3">
+            <h6><i class="fas fa-key me-2 text-success"></i> FCM Tokens</h6>
+            <p>View and manage device tokens registered with your services. These tokens are used to send notifications to specific devices.</p>
+          </div>
+          
+          <div>
+            <h6><i class="fas fa-bell me-2 text-warning"></i> Notifications</h6>
+            <p>Test sending notifications to devices registered with your services using the notification test area.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

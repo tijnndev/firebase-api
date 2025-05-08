@@ -1,0 +1,63 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="fas fa-plus me-2"></i> Create Service</h1>
+    <a href="/services" class="btn btn-outline-secondary">
+      <i class="fas fa-arrow-left me-2"></i> Back to Services
+    </a>
+  </div>
+  
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Service Details</h5>
+        </div>
+        <div class="card-body">
+          <form action="/services/create" method="POST">
+            <div class="mb-3">
+              <label for="name" class="form-label">Service Name</label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Enter service name" required>
+              <div class="form-text">A unique name to identify your service</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="url" class="form-label">Service URL</label>
+              <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com" required>
+              <div class="form-text">The URL users will be directed to when clicking on notifications</div>
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i> Create Service
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Information</h5>
+        </div>
+        <div class="card-body">
+          <p>When you create a service, a unique secret will be generated automatically. This secret is used to authenticate your service when sending notifications.</p>
+          
+          <div class="alert alert-info">
+            <h6 class="mb-2"><i class="fas fa-shield-alt me-2"></i> Security Note</h6>
+            <p class="mb-0">Keep your service secret secure. It acts as an authentication token for sending notifications.</p>
+          </div>
+          
+          <h6 class="mt-4 mb-3">How to use:</h6>
+          <ol class="mb-0">
+            <li>Create a service with a meaningful name and URL.</li>
+            <li>Share your service ID with client applications.</li>
+            <li>Client applications will register tokens with your service.</li>
+            <li>Use the service secret to send notifications to all registered tokens.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

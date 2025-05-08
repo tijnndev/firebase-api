@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/dashboard">
+      <i class="fas fa-bell me-2"></i> Firebase Notification Dashboard
+    </a>
+    
+    <button id="sidebar-toggle" class="navbar-toggler" type="button">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <div class="d-flex align-items-center">
+            <span class="me-2 d-none d-sm-inline"><%= locals.darkMode ? 'Dark' : 'Light' %> Mode</span>
+            <div id="theme-toggler" class="theme-toggler"></div>
+          </div>
+        </li>
+        <li class="nav-item">
+            <i class="fas fa-user me-1"></i> <%= locals.user ? locals.user.username : 'Guest' %>
+        </li>
+        <li class="nav-item">
+          <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

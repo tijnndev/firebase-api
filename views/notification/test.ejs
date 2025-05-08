@@ -1,0 +1,74 @@
+<form id="notification-test-form" class="mb-0">
+  <div class="mb-3">
+    <label for="serviceIdSelect" class="form-label">Select Service</label>
+    <select class="form-select" id="serviceIdSelect" name="serviceId" required>
+      <option value="">-- Select a Service --</option>
+      <% if (typeof services !== 'undefined' && services.length > 0) { %>
+        <% services.forEach(service => { %>
+          <option value="<%= service.id %>" data-secret="<%= service.secret %>"><%= service.name %></option>
+        <% }); %>
+      <% } else { %>
+        <script>
+          // Fetch services if not available in the context
+          document.addEventListener('DOMContentLoaded', function() {
+            fetch('/services/json', {
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              const select = document.getElementById('serviceIdSelect');
+              data.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.id;
+                option.textContent = service.name;
+                option.setAttribute('data-secret', service.secret);
+                select.appendChild(option);
+              });
+            })
+            .catch(error => console.error('Error fetching services:', error));
+          });
+        </script>
+      <% } %>
+    </select>
+  </div>
+  
+  <input type="hidden" name="secret" id="secretInput">
+  
+  <div class="mb-3">
+    <label for="title" class="form-label">Notification Title</label>
+    <input type="text" class="form-control" id="title" name="title" placeholder="Enter notification title" required>
+  </div>
+  
+  <div class="mb-3">
+    <label for="body" class="form-label">Notification Body</label>
+    <textarea class="form-control" id="body" name="body" rows="3" placeholder="Enter notification message" required></textarea>
+  </div>
+  
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-paper-plane me-2"></i> Send Test Notification
+    </button>
+  </div>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const serviceSelect = document.getElementById('serviceIdSelect');
+    const secretInput = document.getElementById('secretInput');
+    
+    // Set secret when service is selected
+    if (serviceSelect && secretInput) {
+      serviceSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption && selectedOption.getAttribute('data-secret')) {
+          secretInput.value = selectedOption.getAttribute('data-secret');
+        } else {
+          secretInput.value = '';
+        }
+      });
+    }
+  });
+</script>
