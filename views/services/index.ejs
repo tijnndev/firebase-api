@@ -61,22 +61,22 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <p class="mb-2">
+                  <p class="mb-0">
+                    <strong>ID:</strong> <%= service.id %>
+                  </p>
+                  <p class="mb-0">
                     <strong>URL:</strong> 
                     <a href="<%= service.url %>" target="_blank" class="service-url"><%= service.url %></a>
+                  </p>
+                  <p class="mb-2">
+                    <strong>Created:</strong> 
+                    <%= new Date(service.created_at).toLocaleString() %>
                   </p>
                   <p class="mb-2">
                     <strong>Secret:</strong> 
                     <span class="d-block text-truncate" style="max-width: 200px;">
                       <%= service.secret.substring(0, 8) %>...
                     </span>
-                  </p>
-                  <p class="mb-0">
-                    <strong>Created:</strong> 
-                    <%= new Date(service.created_at).toLocaleString() %>
-                  </p>
-                  <p class="mb-0">
-                    <strong>ID:</strong> <%= service.id %>
                   </p>
                 </div>
                 <div class="card-footer bg-transparent">
