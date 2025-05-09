@@ -195,7 +195,8 @@ router.post('/test-notification', ensureAuthenticated, (req, res) => {
                 });
               }
             })
-            .catch(() => {
+            .catch((e) => {
+              console.error('Error sending notification to token:', token.token, e);
               errorCount++;
               if (sentCount + errorCount === tokens.length) {
                 res.json({ 
