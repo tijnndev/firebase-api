@@ -7,7 +7,7 @@ const { ensureAuthenticated } = require('../middleware/auth');
 router.get('/', ensureAuthenticated, (req, res) => {
   const db = req.app.locals.db;
   
-  db.all('SELECT * FROM services ORDER BY created_at DESC', [], (err, services) => {
+  db.all('SELECT * FROM services ORDER BY id ASC', [], (err, services) => {
     if (err) {
       req.flash('error_msg', 'Error retrieving services');
       return res.redirect('/dashboard');
