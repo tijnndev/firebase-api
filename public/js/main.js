@@ -1,10 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Check for dark mode preference
+  const darkMode = localStorage.getItem('darkMode') === 'true';
+
+  if (darkMode) {
+    document.body.classList.remove('light-mode');
+  } else {
+    document.body.classList.add('light-mode');
+  }
+  
   // Theme toggler
   const themeToggler = document.getElementById('theme-toggler');
   if (themeToggler) {
     themeToggler.addEventListener('click', function() {
       document.body.classList.toggle('light-mode');
       const isDarkMode = !document.body.classList.contains('light-mode');
+
+      localStorage.setItem('darkMode', isDarkMode);
       
       // Store theme preference
       fetch('/toggle-theme', {
@@ -95,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
       })
         .then(response => response.json())
         .then(data => {
+          console.log(data)
           // Reset form and show success message
           if (data.message) {
             const alertBox = document.createElement('div');

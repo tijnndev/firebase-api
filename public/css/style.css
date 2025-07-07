@@ -219,3 +219,7 @@ body {
   }
   
 }
+
+.card-footer {
+  padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+}
