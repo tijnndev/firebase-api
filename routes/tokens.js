@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
         return res.status(500).send({ error: 'Error registering token'});
       }
 
-      const logContent = `Token registered (${token})`;
+      const logContent = `Token registered (${token.substring(0, 15)}...)`;
       createLogEntry(db, 'info', logContent, serviceId);
       res.status(200).send({ message: 'Token registered successfully'});
       
