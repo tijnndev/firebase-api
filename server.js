@@ -97,6 +97,16 @@ db.run(`
   )
 `);
 
+db.run(`CREATE TABLE IF NOT EXISTS log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL,
+  content TEXT NOT NULL,
+  service_id INTEGER NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE SET NULL
+)`);
+
 // Create default user if no users exist
 const bcrypt = require('bcrypt');
 const createDefaultUser = () => {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const { ensureAuthenticated } = require('../middleware/auth');
+const { createLogEntry } = require('../utils');
 
 // Get all services
 router.get('/', ensureAuthenticated, (req, res) => {
@@ -55,6 +56,10 @@ router.post('/create', ensureAuthenticated, (req, res) => {
       req.flash('error_msg', 'Error creating service: ' + err.message);
       return res.redirect('/services/create');
     }
+
+    // Log the creation of the service
+    const logContent = `Service created: ${name} (ID: ${this.lastID})`;
+    createLogEntry(db, 'info', logContent)
     
     req.flash('success_msg', 'Service created successfully');
     res.redirect('/services');
@@ -72,6 +77,9 @@ router.delete('/:id', ensureAuthenticated, (req, res) => {
     } else if (this.changes === 0) {
       req.flash('error_msg', 'Service not found');
     } else {
+      // Log the deletion of the service
+      const logContent = `Service deleted (ID: ${this.lastID})`;
+      createLogEntry(db, 'info', logContent)
       req.flash('success_msg', 'Service deleted successfully');
     }
     
@@ -91,6 +99,10 @@ router.post('/:id/reset-secret', ensureAuthenticated, (req, res) => {
     } else if (this.changes === 0) {
       req.flash('error_msg', 'Service not found');
     } else {
+      // Log the reset of the service secret
+      const logContent = `Service secret reset (ID: ${id})`;
+      createLogEntry(db, 'info', logContent, id);
+
       req.flash('success_msg', 'Secret reset successfully');
     }
     
@@ -235,6 +247,7 @@ router.get('/:id/tokens', ensureAuthenticated, (req, res) => {
     });
   });
 });
+
 const broadCastMessage = (serviceId, title, body, db, messaging) => {
   db.get('SELECT * FROM services WHERE id = ?', [serviceId], (err, row) => {
     db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
@@ -330,6 +343,10 @@ router.post('/broadcast', (req, res) => {
     }
 
     broadCastMessage(serviceId, title, body, db, messaging);
+
+    // Log the reset of the service secret
+    const logContent = `Broadcasted message to service ${serviceId}: ${title}`;
+    createLogEntry(db, 'warning', logContent, serviceId);
 
     res.status(200).send({ message: 'Broadcast message sent successfully' });
   });

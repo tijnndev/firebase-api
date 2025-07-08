@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     document.body.classList.add('light-mode');
   }
-  
+
   // Theme toggler
   const themeToggler = document.getElementById('theme-toggler');
   if (themeToggler) {
@@ -176,4 +176,26 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
+
+  const logSearchInput = document.getElementById("logSearch");
+  const logTypeFilter = document.getElementById("logTypeFilter");
+  const logEntries = document.querySelectorAll(".log-entry");
+
+  function filterLogs() {
+    const searchTerm = logSearchInput.value.toLowerCase();
+    const selectedType = logTypeFilter.value;
+
+    logEntries.forEach((row) => {
+      const type = row.getAttribute("data-type");
+      const message = row.querySelector(".log-message").textContent.toLowerCase();
+
+      const matchesType = !selectedType || type === selectedType;
+      const matchesSearch = message.includes(searchTerm);
+
+      row.style.display = matchesType && matchesSearch ? "" : "none";
+    });
+  }
+
+  logSearchInput.addEventListener("input", filterLogs);
+  logTypeFilter.addEventListener("change", filterLogs);
 });

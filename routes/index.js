@@ -32,6 +32,51 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
   });
 });
 
+// Dashboard route
+const util = require('util');
+
+router.get('/log', ensureAuthenticated, async (req, res) => {
+  const db = req.app.locals.db;
+
+  // Promisify db.all and db.get
+  const dbAll = util.promisify(db.all).bind(db);
+  const dbGet = util.promisify(db.get).bind(db);
+
+  try {
+    const logs = await dbAll('SELECT * FROM log ORDER BY created_at DESC');
+
+    // Enrich logs with service info
+    const formattedLogs = await Promise.all(logs.map(async log => {
+      let service = null;
+
+      if (log.service_id) {
+        service = await dbGet('SELECT * FROM services WHERE id = ?', [log.service_id]);
+      }
+
+      return {
+        id: log.id,
+        timestamp: log.created_at,
+        type: log.type,
+        message: log.content,
+        service: service || null
+      };
+    }));
+
+    res.render('log', {
+      title: 'Log',
+      logs: formattedLogs
+    });
+  } catch (err) {
+    console.error('Error retrieving logs with service info:', err.message);
+    req.flash('error_msg', 'Error retrieving logs');
+    res.render('log', {
+      title: 'Log',
+      logs: []
+    });
+  }
+});
+
+
 // Toggle theme route
 router.post('/toggle-theme', (req, res) => {
   const { darkMode } = req.body;

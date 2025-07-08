@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated, ensureAuthenticatedAPI } = require('../middleware/auth');
+const { createLogEntry } = require('../utils');
 
 // Get all tokens
 router.get('/', ensureAuthenticated, (req, res) => {
@@ -49,6 +50,9 @@ router.post('/', (req, res) => {
       if (err) {
         return res.status(500).send({ error: 'Error registering token'});
       }
+
+      const logContent = `Token registered (${token})`;
+      createLogEntry(db, 'info', logContent, serviceId);
       res.status(200).send({ message: 'Token registered successfully'});
       
       console.log('New registration token:', token, 'for service:', serviceId);
@@ -72,7 +76,9 @@ router.delete('/', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).send({ error: 'Token not found for the service' });
     }
-
+    
+    const logContent = `Token unregistered (${token})`;
+    createLogEntry(db, 'info', logContent, serviceId);
     res.status(200).send({ message: 'Token unregistered successfully' });
     console.log('Token unregistered:', token, 'for service:', serviceId);
   });
@@ -89,6 +95,8 @@ router.delete('/:id', ensureAuthenticated, (req, res) => {
     } else if (this.changes === 0) {
       req.flash('error_msg', 'Token not found');
     } else {
+      const logContent = `Token deleted (ID: ${id})`;
+      createLogEntry(db, 'warning', logContent);
       req.flash('success_msg', 'Token deleted successfully');
     }
     
