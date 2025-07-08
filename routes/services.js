@@ -202,6 +202,9 @@ router.post('/test-notification', ensureAuthenticated, (req, res) => {
             .then((resp) => {
               sentCount++;
               if (sentCount + errorCount === tokens.length) {
+                const logContent = `Broadcasted message to service ${serviceId}: ${title}`;
+                createLogEntry(db, 'warning', logContent, serviceId);
+
                 res.json({ 
                   message: `Notification sent successfully to ${sentCount} devices. ${errorCount} failed.` 
                 });
@@ -211,6 +214,9 @@ router.post('/test-notification', ensureAuthenticated, (req, res) => {
               console.error('Error sending notification to token:', token.token, e);
               errorCount++;
               if (sentCount + errorCount === tokens.length) {
+                const logContent = `Broadcasted message to service ${serviceId}: ${title}`;
+                createLogEntry(db, 'warning', logContent, serviceId);
+
                 res.json({ 
                   message: `Notification sent successfully to ${sentCount} devices. ${errorCount} failed.` 
                 });
@@ -344,8 +350,7 @@ router.post('/broadcast', (req, res) => {
 
     broadCastMessage(serviceId, title, body, db, messaging);
 
-    // Log the reset of the service secret
-    const logContent = `Broadcasted message to service ${serviceId}: ${title}`;
+    const logContent = `Tested broadcast message to service ${serviceId}: ${title}`;
     createLogEntry(db, 'warning', logContent, serviceId);
 
     res.status(200).send({ message: 'Broadcast message sent successfully' });
