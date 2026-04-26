@@ -180,9 +180,8 @@ router.post('/test-notification', ensureAuthenticated, (req, res) => {
                 link: service.url,
               },
             };
-          }
-          
-          if (token.type === 'android') {
+          } else if (token.type === 'android' || token.type === 'mobile') {
+            // Support both 'android' and 'mobile' types for backward compatibility
             message.notification = {
               title: title,
               body: body,
@@ -256,17 +255,17 @@ router.get('/:id/tokens', ensureAuthenticated, (req, res) => {
 
 const broadCastMessage = (serviceId, title, body, db, messaging) => {
   db.get('SELECT * FROM services WHERE id = ?', [serviceId], (err, row) => {
-    db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
-      
-      const message = {
-        data: {
-          title: title,
-          body: body,
-          url: row.url,
-          LinkUrl: row.url
-        }
-      };
+    if (err) {
+      console.error('Error retrieving service:', err.message);
+      return;
+    }
 
+    if (!row) {
+      console.error('Service not found:', serviceId);
+      return;
+    }
+
+    db.all('SELECT * FROM fcm_tokens WHERE serviceId = ?', [serviceId], (err, rows) => {
       if (err) {
         console.error('Error retrieving FCM tokens:', err.message);
         return;
@@ -280,7 +279,18 @@ const broadCastMessage = (serviceId, title, body, db, messaging) => {
       }
 
       tokens.forEach((token) => {
-        console.log(token)
+        console.log('Broadcasting to token:', token.id, 'type:', token.type);
+        
+        // Create a fresh message object for each token to avoid mutation issues
+        let message = {
+          data: {
+            title: title,
+            body: body,
+            url: row.url,
+            LinkUrl: row.url
+          }
+        };
+
         if (token.type === 'web') {
           message.notification = {
             title: title,
@@ -294,13 +304,13 @@ const broadCastMessage = (serviceId, title, body, db, messaging) => {
             fcmOptions: {
               link: row.url,
             },
-          }
-        }
-        if (token.type === 'android') {
+          };
+        } else if (token.type === 'android' || token.type === 'mobile') {
+          // Support both 'android' and 'mobile' types for backward compatibility
           message.notification = {
             title: title,
             body: body,
-          }
+          };
           message.android = {
             priority: 'high',
             notification: {
@@ -310,17 +320,17 @@ const broadCastMessage = (serviceId, title, body, db, messaging) => {
             }
           };
         }
+
         messaging
           .send({ ...message, token: token.token })
           .then((response) => {
-            console.log('Notification sent successfully:', response);
+            console.log('Notification sent successfully to token:', token.id, response);
           })
           .catch((error) => {
             console.error('Error sending notification to token:', token.token, error);
           });
       });
     });
-    
   });
 };
 
